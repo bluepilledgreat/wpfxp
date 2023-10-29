@@ -28,6 +28,9 @@ namespace Wpf.XP.Controls
 
         private const double DropShadowOpacity = 1;
 
+        private const int TitleBarHeight = 30;
+        private const int ResizeBorderSize = 4;
+
         #endregion
 
         #region Private fields
@@ -53,6 +56,8 @@ namespace Wpf.XP.Controls
         private ImageButton _maximizeButton = null!;
         private ImageButton _restoreButton = null!;
         private ImageButton _closeButton = null!;
+
+        private WindowChrome _windowChrome = null!;
 
         #endregion
 
@@ -122,6 +127,13 @@ namespace Wpf.XP.Controls
             _restoreButton = FindChild<ImageButton>(this, "RestoreButton")!;
             _closeButton = FindChild<ImageButton>(this, "CloseButton")!;
 
+            _windowChrome = new WindowChrome
+            {
+                ResizeBorderThickness = new Thickness(ResizeBorderSize),
+                CaptionHeight = TitleBarHeight - ResizeBorderSize,
+                GlassFrameThickness = new Thickness(ResizeBorderSize)
+            };
+
             UpdateTitlebarButtons(ResizeMode);
 
             // designer does not like this
@@ -140,14 +152,7 @@ namespace Wpf.XP.Controls
                 _restoreButton.Click += RestoreButton_Click;
                 _closeButton.Click += CloseButton_Click;
 
-                var windowChrome = new WindowChrome
-                {
-                    ResizeBorderThickness = new Thickness(4),
-                    CaptionHeight = 30 - 4,
-                    GlassFrameThickness = new Thickness(4)
-                };
-
-                WindowChrome.SetWindowChrome(_window, windowChrome);
+                WindowChrome.SetWindowChrome(_window, _windowChrome);
             }
 
             _loaded = true;
@@ -181,6 +186,17 @@ namespace Wpf.XP.Controls
 
         private void UpdateTitlebarButtons(ResizeMode resizeMode)
         {
+            if (resizeMode == ResizeMode.NoResize || resizeMode == ResizeMode.CanMinimize)
+            {
+                _windowChrome.CaptionHeight = TitleBarHeight;
+                _windowChrome.ResizeBorderThickness = new Thickness(0);
+            }
+            else
+            {
+                _windowChrome.CaptionHeight = TitleBarHeight - ResizeBorderSize;
+                _windowChrome.ResizeBorderThickness = new Thickness(ResizeBorderSize);
+            }
+
             if (resizeMode == ResizeMode.NoResize)
             {
                 _minimizeButton.Visibility = Visibility.Collapsed;
