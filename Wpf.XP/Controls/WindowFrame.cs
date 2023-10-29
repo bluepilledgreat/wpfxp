@@ -104,12 +104,6 @@ namespace Wpf.XP.Controls
 
             bool designer = DesignerProperties.GetIsInDesignMode(this);
 
-            // designer does not like any of this
-            if (designer)
-                return;
-
-            _window = Window.GetWindow(this);
-
             _title = FindChild<TextBlock>(this, "Title")!;
 
             _titleBarLeft = FindChild<Image>(this, "TitleBarLeft")!;
@@ -128,27 +122,33 @@ namespace Wpf.XP.Controls
             _restoreButton = FindChild<ImageButton>(this, "RestoreButton")!;
             _closeButton = FindChild<ImageButton>(this, "CloseButton")!;
 
-            HookWindowProc();
-            _window.StateChanged += Window_StateChanged;
-
-            _window.Activated += Window_Activated;
-            _window.Deactivated += Window_Deactivated;
-
-            _minimizeButton.Click += MinimizeButton_Click;
-            _maximizeButton.Click += MaximizeButton_Click;
-            _restoreButton.Click += RestoreButton_Click;
-            _closeButton.Click += CloseButton_Click;
-
             UpdateTitlebarButtons(ResizeMode);
 
-            var windowChrome = new WindowChrome
+            // designer does not like this
+            if (!designer)
             {
-                ResizeBorderThickness = new Thickness(4),
-                CaptionHeight = 30 - 4,
-                GlassFrameThickness = new Thickness(4)
-            };
+                _window = Window.GetWindow(this);
 
-            WindowChrome.SetWindowChrome(_window, windowChrome);
+                HookWindowProc();
+                _window.StateChanged += Window_StateChanged;
+
+                _window.Activated += Window_Activated;
+                _window.Deactivated += Window_Deactivated;
+
+                _minimizeButton.Click += MinimizeButton_Click;
+                _maximizeButton.Click += MaximizeButton_Click;
+                _restoreButton.Click += RestoreButton_Click;
+                _closeButton.Click += CloseButton_Click;
+
+                var windowChrome = new WindowChrome
+                {
+                    ResizeBorderThickness = new Thickness(4),
+                    CaptionHeight = 30 - 4,
+                    GlassFrameThickness = new Thickness(4)
+                };
+
+                WindowChrome.SetWindowChrome(_window, windowChrome);
+            }
 
             _loaded = true;
         }
@@ -192,9 +192,11 @@ namespace Wpf.XP.Controls
             _maximizeButton.IsEnabled = resizeMode != ResizeMode.CanMinimize;
             _restoreButton.IsEnabled = resizeMode != ResizeMode.CanMinimize;
 
+            WindowState windowState = _window != null ? _window.WindowState : WindowState.Normal;
+
             _minimizeButton.Visibility = Visibility.Visible;
-            _maximizeButton.Visibility = _window.WindowState != WindowState.Maximized ? Visibility.Visible : Visibility.Collapsed;
-            _restoreButton.Visibility = _window.WindowState == WindowState.Maximized ? Visibility.Visible : Visibility.Collapsed;
+            _maximizeButton.Visibility = windowState != WindowState.Maximized ? Visibility.Visible : Visibility.Collapsed;
+            _restoreButton.Visibility = windowState == WindowState.Maximized ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private static void ResizeModePropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
