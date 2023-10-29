@@ -73,6 +73,11 @@ namespace Wpf.XP.Controls
             this.PreviewMouseUp += ImageButton_PreviewMouseUp;
 
             this.IsEnabledChanged += ImageButton_IsEnabledChanged;
+        }
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
 
             UpdateImage();
         }
