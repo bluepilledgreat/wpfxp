@@ -24,6 +24,12 @@ namespace Wpf.XP.Controls
     /// </summary>
     public class WindowFrame : ContentControl
     {
+        #region Constants
+
+        private const double DropShadowOpacity = 0.8;
+
+        #endregion
+
         #region Private fields
 
         private bool _loaded = false;
@@ -259,7 +265,7 @@ namespace Wpf.XP.Controls
             _title.Foreground = new SolidColorBrush(textColor);
 
             // effect is read only so we have to create a new one every time
-            var effect = CreateNewDropShadowEffect((DropShadowEffect)_title.Effect, isActive ? 1d : 0d);
+            var effect = CreateNewDropShadowEffect((DropShadowEffect)_title.Effect, isActive ? DropShadowOpacity : 0d);
             _title.Effect = effect;
         }
 
