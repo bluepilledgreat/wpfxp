@@ -21,10 +21,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:WindowFrame}">
-                    <Grid
-                        x:Name="MainGrid"
-                        TextOptions.TextFormattingMode="Display"
-                        TextOptions.TextRenderingMode="Aliased">
+                    <Grid x:Name="MainGrid">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
@@ -162,7 +159,7 @@
 
                         <Grid
                             Grid.Row="0"
-                            Margin="6,4,0,0"
+                            Margin="6,8,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top">
                             <Grid.ColumnDefinitions>
@@ -183,10 +180,12 @@
                                 Grid.Column="1"
                                 Margin="4,1,0,0"
                                 FontFamily="Trebuchet MS"
-                                FontSize="17"
+                                FontSize="14"
+                                FontWeight="Bold"
                                 Foreground="White"
                                 SnapsToDevicePixels="True"
                                 Text="{TemplateBinding Title}"
+                                TextOptions.TextFormattingMode="Ideal"
                                 TextTrimming="CharacterEllipsis">
                                 <TextBlock.Effect>
                                     <DropShadowEffect
