@@ -24,25 +24,7 @@ namespace Wpf.XP.Controls
     /// </summary>
     public class WindowFrame : ContentControl
     {
-        public string Title
-        {
-            get => GetValue(TitleProperty) as string ?? "";
-            set => SetValue(TitleProperty, value);
-        }
-
-        public ImageSource? Icon
-        {
-            get => GetValue(IconProperty) as ImageSource;
-            set => SetValue(IconProperty, value);
-        }
-
-        public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register("Title", typeof(string), typeof(WindowFrame),
-            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-
-        public static readonly DependencyProperty IconProperty =
-            DependencyProperty.Register("Icon", typeof(ImageSource), typeof(WindowFrame),
-            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        #region Private fields
 
         private Window _window = null!;
 
@@ -63,6 +45,36 @@ namespace Wpf.XP.Controls
         private ImageButton _maximizeButton = null!;
         private ImageButton _restoreButton = null!;
         private ImageButton _closeButton = null!;
+
+        #endregion
+
+        #region Public properties
+
+        public string Title
+        {
+            get => GetValue(TitleProperty) as string ?? "";
+            set => SetValue(TitleProperty, value);
+        }
+
+        public ImageSource? Icon
+        {
+            get => GetValue(IconProperty) as ImageSource;
+            set => SetValue(IconProperty, value);
+        }
+
+        #endregion
+
+        #region Dependency properties registration
+
+        public static readonly DependencyProperty TitleProperty =
+            DependencyProperty.Register("Title", typeof(string), typeof(WindowFrame),
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        public static readonly DependencyProperty IconProperty =
+            DependencyProperty.Register("Icon", typeof(ImageSource), typeof(WindowFrame),
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        #endregion
 
         public WindowFrame() : base()
         {
@@ -119,6 +131,8 @@ namespace Wpf.XP.Controls
             WindowChrome.SetWindowChrome(_window, windowChrome);
         }
 
+        #region Maximize Fix
+
         // to fix maximize - https://stackoverflow.com/a/46465322
         private void HookWindowProc()
         {
@@ -138,6 +152,10 @@ namespace Wpf.XP.Controls
 
             return (IntPtr)0;
         }
+
+        #endregion
+
+        #region Activity
 
         private ImageSource CreateImageSource(string uri)
         {
@@ -201,6 +219,10 @@ namespace Wpf.XP.Controls
             ChangeActive(false);
         }
 
+        #endregion
+
+        #region Buttons
+
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
         {
             _window.WindowState = WindowState.Minimized;
@@ -221,6 +243,10 @@ namespace Wpf.XP.Controls
             _window.Close();
         }
 
+        #endregion
+
+        #region Window State
+
         private void Window_StateChanged(object? sender, EventArgs e)
         {
             if (_window.WindowState == WindowState.Maximized)
@@ -234,6 +260,10 @@ namespace Wpf.XP.Controls
                 _restoreButton.Visibility = Visibility.Collapsed;
             }
         }
+
+        #endregion
+
+        #region Utils
 
         /// <summary>
         /// Finds a Child of a given item in the visual tree. <br/>
@@ -288,6 +318,8 @@ namespace Wpf.XP.Controls
 
             return foundChild;
         }
+
+        #endregion
 
         static WindowFrame()
         {
