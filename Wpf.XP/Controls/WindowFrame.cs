@@ -26,7 +26,7 @@ namespace Wpf.XP.Controls
     {
         #region Constants
 
-        private const double DropShadowOpacity = 0.8;
+        private const double DropShadowOpacity = 1;
 
         #endregion
 

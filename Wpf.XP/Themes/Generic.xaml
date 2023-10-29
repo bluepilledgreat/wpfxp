@@ -191,9 +191,9 @@
                                     <DropShadowEffect
                                         BlurRadius="0"
                                         Direction="315"
-                                        Opacity="0.8"
+                                        Opacity="1"
                                         ShadowDepth="1"
-                                        Color="Black" />
+                                        Color="#0A1883" />
                                 </TextBlock.Effect>
                             </TextBlock>
                         </Grid>
