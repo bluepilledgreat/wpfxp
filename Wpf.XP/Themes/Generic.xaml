@@ -20,6 +20,7 @@
         <Setter Property="Background" Value="#ECE9D8" />
         <Setter Property="Title" Value="Binbows xp" />
         <Setter Property="Icon" Value="{x:Null}" />
+        <Setter Property="ResizeMode" Value="CanResize" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:WindowFrame}">
@@ -107,6 +108,7 @@
                                 Padding="0"
                                 Background="Transparent"
                                 BorderThickness="0"
+                                DisabledImage="pack://application:,,,/Wpf.XP;component/Resources/Frame/MaximizeButtonDisabled.png"
                                 HoverImage="pack://application:,,,/Wpf.XP;component/Resources/Frame/MaximizeButtonHover.png"
                                 Image="pack://application:,,,/Wpf.XP;component/Resources/Frame/MaximizeButton.png"
                                 PressImage="pack://application:,,,/Wpf.XP;component/Resources/Frame/MaximizeButtonPressed.png"
@@ -127,6 +129,7 @@
                                 Padding="0"
                                 Background="Transparent"
                                 BorderThickness="0"
+                                DisabledImage="pack://application:,,,/Wpf.XP;component/Resources/Frame/RestoreButtonDisabled.png"
                                 HoverImage="pack://application:,,,/Wpf.XP;component/Resources/Frame/RestoreButtonHover.png"
                                 Image="pack://application:,,,/Wpf.XP;component/Resources/Frame/RestoreButton.png"
                                 PressImage="pack://application:,,,/Wpf.XP;component/Resources/Frame/RestoreButtonPressed.png"

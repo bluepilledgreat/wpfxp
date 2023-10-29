@@ -26,6 +26,8 @@ namespace Wpf.XP.Controls
     {
         #region Private fields
 
+        private bool _loaded = false;
+
         private Window _window = null!;
 
         private TextBlock _title = null!;
@@ -62,6 +64,12 @@ namespace Wpf.XP.Controls
             set => SetValue(IconProperty, value);
         }
 
+        public ResizeMode ResizeMode
+        {
+            get => (ResizeMode)GetValue(ResizeModeProperty);
+            set => SetValue(ResizeModeProperty, value);
+        }
+
         #endregion
 
         #region Dependency properties registration
@@ -73,6 +81,10 @@ namespace Wpf.XP.Controls
         public static readonly DependencyProperty IconProperty =
             DependencyProperty.Register("Icon", typeof(ImageSource), typeof(WindowFrame),
             new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        public static readonly DependencyProperty ResizeModeProperty =
+            DependencyProperty.Register("ResizeMode", typeof(ResizeMode), typeof(WindowFrame),
+            new FrameworkPropertyMetadata(ResizeMode.CanResize, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, ResizeModePropertyChanged));
 
         #endregion
 
@@ -121,6 +133,8 @@ namespace Wpf.XP.Controls
             _restoreButton.Click += RestoreButton_Click;
             _closeButton.Click += CloseButton_Click;
 
+            UpdateTitlebarButtons(ResizeMode);
+
             var windowChrome = new WindowChrome
             {
                 ResizeBorderThickness = new Thickness(4),
@@ -129,6 +143,8 @@ namespace Wpf.XP.Controls
             };
 
             WindowChrome.SetWindowChrome(_window, windowChrome);
+
+            _loaded = true;
         }
 
         #region Maximize Fix
@@ -151,6 +167,42 @@ namespace Wpf.XP.Controls
             }
 
             return (IntPtr)0;
+        }
+
+        #endregion
+
+        #region Resize Mode
+
+        private void UpdateTitlebarButtons(ResizeMode resizeMode)
+        {
+            if (resizeMode == ResizeMode.NoResize)
+            {
+                _minimizeButton.Visibility = Visibility.Collapsed;
+                _maximizeButton.Visibility = Visibility.Collapsed;
+                _restoreButton.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            _maximizeButton.IsEnabled = resizeMode != ResizeMode.CanMinimize;
+            _restoreButton.IsEnabled = resizeMode != ResizeMode.CanMinimize;
+
+            _minimizeButton.Visibility = Visibility.Visible;
+            _maximizeButton.Visibility = _window.WindowState != WindowState.Maximized ? Visibility.Visible : Visibility.Collapsed;
+            _restoreButton.Visibility = _window.WindowState == WindowState.Maximized ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private static void ResizeModePropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
+        {
+            WindowFrame? windowFrame = source as WindowFrame;
+            if (windowFrame == null)
+                return;
+
+            if (!windowFrame._loaded)
+                return;
+
+            ResizeMode resizeMode = (ResizeMode)e.NewValue;
+
+            windowFrame.UpdateTitlebarButtons(resizeMode);
         }
 
         #endregion
@@ -192,7 +244,9 @@ namespace Wpf.XP.Controls
 
             _minimizeButton.Image = CreateImageSource("MinimizeButton" + suffix);
             _maximizeButton.Image = CreateImageSource("MaximizeButton" + suffix);
+            _maximizeButton.DisabledImage = CreateImageSource("MaximizeButtonDisabled" + suffix);
             _restoreButton.Image = CreateImageSource("RestoreButton" + suffix);
+            _restoreButton.DisabledImage = CreateImageSource("RestoreButtonDisabled" + suffix);
             _closeButton.Image = CreateImageSource("CloseButton" + suffix);
 
             Color textColor = new Color();

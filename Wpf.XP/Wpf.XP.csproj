@@ -18,6 +18,8 @@
     <Resource Include="Resources\Frame\CloseButtonInactive.png" />
     <Resource Include="Resources\Frame\CloseButtonPressed.png" />
     <Resource Include="Resources\Frame\MaximizeButton.png" />
+    <Resource Include="Resources\Frame\MaximizeButtonDisabled.png" />
+    <Resource Include="Resources\Frame\MaximizeButtonDisabledInactive.png" />
     <Resource Include="Resources\Frame\MaximizeButtonHover.png" />
     <Resource Include="Resources\Frame\MaximizeButtonInactive.png" />
     <Resource Include="Resources\Frame\MaximizeButtonPressed.png" />
@@ -26,6 +28,8 @@
     <Resource Include="Resources\Frame\MinimizeButtonInactive.png" />
     <Resource Include="Resources\Frame\MinimizeButtonPressed.png" />
     <Resource Include="Resources\Frame\RestoreButton.png" />
+    <Resource Include="Resources\Frame\RestoreButtonDisabled.png" />
+    <Resource Include="Resources\Frame\RestoreButtonDisabledInactive.png" />
     <Resource Include="Resources\Frame\RestoreButtonHover.png" />
     <Resource Include="Resources\Frame\RestoreButtonInactive.png" />
     <Resource Include="Resources\Frame\RestoreButtonPressed.png" />

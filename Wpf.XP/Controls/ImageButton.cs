@@ -32,6 +32,12 @@ namespace Wpf.XP.Controls
             set => SetValue(PressImageProperty, value);
         }
 
+        public ImageSource? DisabledImage
+        {
+            get => GetValue(DisabledImageProperty) as ImageSource;
+            set => SetValue(DisabledImageProperty, value);
+        }
+
         public static readonly DependencyProperty ImageProperty =
             DependencyProperty.Register("Image", typeof(ImageSource), typeof(ImageButton),
             new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, ImagePropertyChanged));
@@ -42,6 +48,10 @@ namespace Wpf.XP.Controls
 
         public static readonly DependencyProperty PressImageProperty =
             DependencyProperty.Register("PressImage", typeof(ImageSource), typeof(ImageButton),
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, ImagePropertyChanged));
+
+        public static readonly DependencyProperty DisabledImageProperty =
+            DependencyProperty.Register("DisabledImage", typeof(ImageSource), typeof(ImageButton),
             new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, ImagePropertyChanged));
 
         private static void ImagePropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
@@ -62,6 +72,8 @@ namespace Wpf.XP.Controls
             this.PreviewMouseDown += ImageButton_PreviewMouseDown;
             this.PreviewMouseUp += ImageButton_PreviewMouseUp;
 
+            this.IsEnabledChanged += ImageButton_IsEnabledChanged;
+
             UpdateImage();
         }
 
@@ -72,6 +84,13 @@ namespace Wpf.XP.Controls
 
             if (image == null)
                 return;
+
+            if (!IsEnabled)
+            {
+                image.Source = this.DisabledImage ?? this.Image;
+
+                return;
+            }
 
             if (_pressed && this.PressImage != null)
             {
@@ -89,9 +108,14 @@ namespace Wpf.XP.Controls
 
         protected override void OnContentChanged(object oldValue, object newValue)
         {
-            UpdateImage();
-
             base.OnContentChanged(oldValue, newValue);
+
+            UpdateImage();
+        }
+
+        private void ImageButton_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateImage();
         }
 
         private void ImageButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)

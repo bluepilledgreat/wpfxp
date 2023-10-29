@@ -16,7 +16,10 @@
     TextOptions.TextRenderingMode="Aliased"
     WindowStyle="None"
     mc:Ignorable="d">
-    <xp:WindowFrame Title="Troll" Icon="pack://application:,,,/Resources/troll.ico">
+    <xp:WindowFrame
+        Title="Troll"
+        Icon="pack://application:,,,/Resources/troll.ico"
+        ResizeMode="NoResize">
         <Grid Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
