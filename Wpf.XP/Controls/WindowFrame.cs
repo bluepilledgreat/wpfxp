@@ -31,6 +31,9 @@ namespace Wpf.XP.Controls
         private const int TitleBarHeight = 30;
         private const int ResizeBorderSize = 4;
 
+        private const int MinimumHeight = TitleBarHeight + ResizeBorderSize;
+        private const int MinimumWidth = 115;
+
         #endregion
 
         #region Private fields
@@ -141,6 +144,9 @@ namespace Wpf.XP.Controls
             {
                 _window = Window.GetWindow(this);
 
+                _window.SizeChanged += Window_SizeChanged;
+                CheckWindowSize();
+
                 HookWindowProc();
                 _window.StateChanged += Window_StateChanged;
 
@@ -178,6 +184,24 @@ namespace Wpf.XP.Controls
             }
 
             return (IntPtr)0;
+        }
+
+        #endregion
+
+        #region Window Size
+
+        private void CheckWindowSize()
+        {
+            if (_window.Height < MinimumHeight)
+                _window.Height = MinimumHeight;
+
+            if (_window.Width < MinimumWidth)
+                _window.Width = MinimumWidth;
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            CheckWindowSize();
         }
 
         #endregion
