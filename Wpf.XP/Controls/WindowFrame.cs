@@ -52,9 +52,9 @@ namespace Wpf.XP.Controls
 
         #region Public properties
 
-        public string Title
+        public string? Title
         {
-            get => GetValue(TitleProperty) as string ?? "";
+            get => GetValue(TitleProperty) as string;
             set => SetValue(TitleProperty, value);
         }
 
@@ -76,7 +76,7 @@ namespace Wpf.XP.Controls
 
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register("Title", typeof(string), typeof(WindowFrame),
-            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            new FrameworkPropertyMetadata("Binbows xp", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         public static readonly DependencyProperty IconProperty =
             DependencyProperty.Register("Icon", typeof(ImageSource), typeof(WindowFrame),
