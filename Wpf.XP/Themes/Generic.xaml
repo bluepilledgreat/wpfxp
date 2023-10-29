@@ -65,14 +65,47 @@
 
                         <Grid
                             Grid.Row="0"
-                            Margin="0,2,6,0"
-                            HorizontalAlignment="Right">
+                            Margin="6,6,0,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top">
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
+
+                            <Image
+                                Width="16"
+                                Height="16"
+                                Margin="0,-1,0,0"
+                                RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                SnapsToDevicePixels="True"
+                                Source="{TemplateBinding Icon}" />
+
+                            <TextBlock
+                                x:Name="Title"
+                                Grid.Column="1"
+                                Margin="4,3,0,0"
+                                FontFamily="Trebuchet MS"
+                                FontSize="14"
+                                FontWeight="Bold"
+                                Foreground="White"
+                                SnapsToDevicePixels="True"
+                                Text="{TemplateBinding Title}"
+                                TextOptions.TextFormattingMode="Ideal"
+                                TextTrimming="CharacterEllipsis">
+                                <TextBlock.Effect>
+                                    <DropShadowEffect
+                                        BlurRadius="0"
+                                        Direction="315"
+                                        Opacity="1"
+                                        ShadowDepth="1"
+                                        Color="#0A1883" />
+                                </TextBlock.Effect>
+                            </TextBlock>
 
                             <local:ImageButton
                                 x:Name="MinimizeButton"
@@ -141,7 +174,7 @@
                                 Grid.Column="3"
                                 Width="21"
                                 Height="21"
-                                Margin="2,0,0,0"
+                                Margin="2,0,6,0"
                                 Padding="0"
                                 Background="Transparent"
                                 BorderThickness="0"
@@ -155,47 +188,6 @@
                                     RenderOptions.BitmapScalingMode="NearestNeighbor"
                                     SnapsToDevicePixels="True" />
                             </local:ImageButton>
-                        </Grid>
-
-                        <Grid
-                            Grid.Row="0"
-                            Margin="6,8,0,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <Image
-                                Width="16"
-                                Height="16"
-                                Margin="0,-1,0,0"
-                                RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                SnapsToDevicePixels="True"
-                                Source="{TemplateBinding Icon}" />
-
-                            <TextBlock
-                                x:Name="Title"
-                                Grid.Column="1"
-                                Margin="4,1,0,0"
-                                FontFamily="Trebuchet MS"
-                                FontSize="14"
-                                FontWeight="Bold"
-                                Foreground="White"
-                                SnapsToDevicePixels="True"
-                                Text="{TemplateBinding Title}"
-                                TextOptions.TextFormattingMode="Ideal"
-                                TextTrimming="CharacterEllipsis">
-                                <TextBlock.Effect>
-                                    <DropShadowEffect
-                                        BlurRadius="0"
-                                        Direction="315"
-                                        Opacity="1"
-                                        ShadowDepth="1"
-                                        Color="#0A1883" />
-                                </TextBlock.Effect>
-                            </TextBlock>
                         </Grid>
 
                         <Grid Grid.Row="1">
