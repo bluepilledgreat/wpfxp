@@ -19,6 +19,7 @@
     <xp:WindowFrame
         Title="Troll"
         Icon="pack://application:,,,/Resources/troll.ico"
+        IconVisible="True"
         ResizeMode="NoResize">
         <Grid Margin="20">
             <Grid.RowDefinitions>

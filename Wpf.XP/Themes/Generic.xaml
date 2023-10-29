@@ -65,7 +65,7 @@
 
                         <Grid
                             Grid.Row="0"
-                            Margin="6,6,0,0"
+                            Margin="7,6,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top">
                             <Grid.ColumnDefinitions>
@@ -78,9 +78,10 @@
                             </Grid.ColumnDefinitions>
 
                             <Image
+                                x:Name="Icon"
                                 Width="16"
                                 Height="16"
-                                Margin="0,-1,0,0"
+                                Margin="-1,-1,4,0"
                                 RenderOptions.BitmapScalingMode="NearestNeighbor"
                                 SnapsToDevicePixels="True"
                                 Source="{TemplateBinding Icon}" />
@@ -88,7 +89,7 @@
                             <TextBlock
                                 x:Name="Title"
                                 Grid.Column="1"
-                                Margin="4,3,0,0"
+                                Margin="0,3,0,0"
                                 FontFamily="Trebuchet MS"
                                 FontSize="14"
                                 FontWeight="Bold"

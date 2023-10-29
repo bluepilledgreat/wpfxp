@@ -28,6 +28,7 @@ namespace Wpf.XP.Controls
 
         private const double DropShadowOpacity = 1;
 
+        // With maximise button hidden, the title bar shrinks by one pixel. We do not replicate that behaviour.
         private const int TitleBarHeight = 30;
         private const int ResizeBorderSize = 4;
 
@@ -40,6 +41,7 @@ namespace Wpf.XP.Controls
 
         private bool _loaded = false;
 
+        private Image _icon = null!;
         private Window _window = null!;
 
         private TextBlock _title = null!;
@@ -78,6 +80,12 @@ namespace Wpf.XP.Controls
             set => SetValue(IconProperty, value);
         }
 
+        public bool IconVisible
+        {
+            get => (bool)GetValue(IconVisibleProperty);
+            set => SetValue(IconVisibleProperty, value);
+        }
+
         public ResizeMode ResizeMode
         {
             get => (ResizeMode)GetValue(ResizeModeProperty);
@@ -96,9 +104,45 @@ namespace Wpf.XP.Controls
             DependencyProperty.Register("Icon", typeof(ImageSource), typeof(WindowFrame),
             new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
+        public static readonly DependencyProperty IconVisibleProperty =
+            DependencyProperty.Register("IconVisible", typeof(bool), typeof(WindowFrame),
+            new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, IconVisiblePropertyChanged));
+
         public static readonly DependencyProperty ResizeModeProperty =
             DependencyProperty.Register("ResizeMode", typeof(ResizeMode), typeof(WindowFrame),
             new FrameworkPropertyMetadata(ResizeMode.CanResize, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, ResizeModePropertyChanged));
+
+        #endregion
+
+        #region Property changed callbacks
+
+        private static void IconVisiblePropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
+        {
+            WindowFrame? windowFrame = source as WindowFrame;
+            if (windowFrame == null)
+                return;
+
+            if (!windowFrame._loaded)
+                return;
+
+            bool visible = (bool)e.NewValue;
+
+            windowFrame.SetIconVisibility(visible);
+        }
+
+        private static void ResizeModePropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
+        {
+            WindowFrame? windowFrame = source as WindowFrame;
+            if (windowFrame == null)
+                return;
+
+            if (!windowFrame._loaded)
+                return;
+
+            ResizeMode resizeMode = (ResizeMode)e.NewValue;
+
+            windowFrame.UpdateTitlebarButtons(resizeMode);
+        }
 
         #endregion
 
@@ -112,6 +156,7 @@ namespace Wpf.XP.Controls
 
             bool designer = DesignerProperties.GetIsInDesignMode(this);
 
+            _icon = FindChild<Image>(this, "Icon")!;
             _title = FindChild<TextBlock>(this, "Title")!;
 
             _titleBarLeft = FindChild<Image>(this, "TitleBarLeft")!;
@@ -139,6 +184,8 @@ namespace Wpf.XP.Controls
 
             UpdateTitlebarButtons(ResizeMode);
 
+            SetIconVisibility(IconVisible);
+
             // designer does not like this
             if (!designer)
             {
@@ -148,6 +195,7 @@ namespace Wpf.XP.Controls
                 CheckWindowSize();
 
                 HookWindowProc();
+
                 _window.StateChanged += Window_StateChanged;
 
                 _window.Activated += Window_Activated;
@@ -239,18 +287,15 @@ namespace Wpf.XP.Controls
             _restoreButton.Visibility = windowState == WindowState.Maximized ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private static void ResizeModePropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
+        #endregion
+
+        #region Icon
+
+        private void SetIconVisibility(bool visible)
         {
-            WindowFrame? windowFrame = source as WindowFrame;
-            if (windowFrame == null)
-                return;
+            Visibility visibility = visible ? Visibility.Visible : Visibility.Collapsed;
 
-            if (!windowFrame._loaded)
-                return;
-
-            ResizeMode resizeMode = (ResizeMode)e.NewValue;
-
-            windowFrame.UpdateTitlebarButtons(resizeMode);
+            _icon.Visibility = visibility;
         }
 
         #endregion
