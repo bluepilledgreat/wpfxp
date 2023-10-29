@@ -26,8 +26,6 @@ namespace Wpf.XP.Controls
     {
         #region Constants
 
-        private const double DropShadowOpacity = 1;
-
         // With maximise button hidden, the title bar shrinks by one pixel. We do not replicate that behaviour.
         private const int TitleBarHeight = 30;
         private const int ResizeBorderSize = 4;
@@ -352,7 +350,7 @@ namespace Wpf.XP.Controls
             _title.Foreground = new SolidColorBrush(textColor);
 
             // effect is read only so we have to create a new one every time
-            var effect = CreateNewDropShadowEffect((DropShadowEffect)_title.Effect, isActive ? DropShadowOpacity : 0d);
+            var effect = CreateNewDropShadowEffect((DropShadowEffect)_title.Effect, isActive ? 1d : 0d);
             _title.Effect = effect;
         }
 
