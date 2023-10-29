@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Frame\BottomLeft.png" />
+    <Resource Include="Resources\Frame\BottomLeftInactive.png" />
+    <Resource Include="Resources\Frame\BottomMiddle.png" />
+    <Resource Include="Resources\Frame\BottomMiddleInactive.png" />
+    <Resource Include="Resources\Frame\BottomRight.png" />
+    <Resource Include="Resources\Frame\BottomRightInactive.png" />
+    <Resource Include="Resources\Frame\CloseButton.png" />
+    <Resource Include="Resources\Frame\CloseButtonHover.png" />
+    <Resource Include="Resources\Frame\CloseButtonInactive.png" />
+    <Resource Include="Resources\Frame\CloseButtonPressed.png" />
+    <Resource Include="Resources\Frame\MaximizeButton.png" />
+    <Resource Include="Resources\Frame\MaximizeButtonHover.png" />
+    <Resource Include="Resources\Frame\MaximizeButtonInactive.png" />
+    <Resource Include="Resources\Frame\MaximizeButtonPressed.png" />
+    <Resource Include="Resources\Frame\MinimizeButton.png" />
+    <Resource Include="Resources\Frame\MinimizeButtonHover.png" />
+    <Resource Include="Resources\Frame\MinimizeButtonInactive.png" />
+    <Resource Include="Resources\Frame\MinimizeButtonPressed.png" />
+    <Resource Include="Resources\Frame\RestoreButton.png" />
+    <Resource Include="Resources\Frame\RestoreButtonHover.png" />
+    <Resource Include="Resources\Frame\RestoreButtonInactive.png" />
+    <Resource Include="Resources\Frame\RestoreButtonPressed.png" />
+    <Resource Include="Resources\Frame\SideLeft.png" />
+    <Resource Include="Resources\Frame\SideLeftInactive.png" />
+    <Resource Include="Resources\Frame\SideRight.png" />
+    <Resource Include="Resources\Frame\SideRightInactive.png" />
+    <Resource Include="Resources\Frame\TitleLeft.png" />
+    <Resource Include="Resources\Frame\TitleLeftInactive.png" />
+    <Resource Include="Resources\Frame\TitleMiddle.png" />
+    <Resource Include="Resources\Frame\TitleMiddleInactive.png" />
+    <Resource Include="Resources\Frame\TitleRight.png" />
+    <Resource Include="Resources\Frame\TitleRightInactive.png" />
+  </ItemGroup>
+
+</Project>
