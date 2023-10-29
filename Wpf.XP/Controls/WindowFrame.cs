@@ -144,7 +144,7 @@ namespace Wpf.XP.Controls
             var windowChrome = new WindowChrome
             {
                 ResizeBorderThickness = new Thickness(4),
-                CaptionHeight = 30,
+                CaptionHeight = 30 - 4,
                 GlassFrameThickness = new Thickness(4)
             };
 
