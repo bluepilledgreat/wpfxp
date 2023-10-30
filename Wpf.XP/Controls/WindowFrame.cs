@@ -33,14 +33,10 @@ namespace Wpf.XP.Controls
         private const int MinimumHeight = TitleBarHeight + ResizeBorderSize;
         private const int MinimumWidth = 115;
 
-        public const int HeightModifier = MinimumHeight;
-        public const int WidthModifier = ResizeBorderSize * 2;
-
         #endregion
 
         #region Private fields
 
-        private bool _designer = false;
         private bool _loaded = false;
 
         private Image _icon = null!;
@@ -94,12 +90,6 @@ namespace Wpf.XP.Controls
             set => SetValue(ResizeModeProperty, value);
         }
 
-        public SizeToContent InitialSizeToContent
-        {
-            get => (SizeToContent)GetValue(InitialSizeToContentProperty);
-            set => SetValue(InitialSizeToContentProperty, value);
-        }
-
         #endregion
 
         #region Dependency properties registration
@@ -119,10 +109,6 @@ namespace Wpf.XP.Controls
         public static readonly DependencyProperty ResizeModeProperty =
             DependencyProperty.Register("ResizeMode", typeof(ResizeMode), typeof(WindowFrame),
             new FrameworkPropertyMetadata(ResizeMode.CanResize, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, ResizeModePropertyChanged));
-
-        public static readonly DependencyProperty InitialSizeToContentProperty =
-            DependencyProperty.Register("InitialSizeToContent", typeof(SizeToContent), typeof(WindowFrame),
-            new FrameworkPropertyMetadata(SizeToContent.Manual, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, InitialSizeToContentPropertyChanged));
 
         #endregion
 
@@ -156,31 +142,17 @@ namespace Wpf.XP.Controls
             windowFrame.UpdateTitlebarButtons(resizeMode);
         }
 
-        private static void InitialSizeToContentPropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
-        {
-            WindowFrame? windowFrame = source as WindowFrame;
-            if (windowFrame == null)
-                return;
-
-            if (!windowFrame._loaded)
-                return;
-
-            // only for designer
-            if (windowFrame._designer)
-                return;
-
-            SizeToContent sizeToContent = (SizeToContent)e.NewValue;
-
-            windowFrame.SizeWindowToContent(sizeToContent);
-        }
-
         #endregion
+
+        public WindowFrame() : base()
+        {
+        }
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
 
-            _designer = DesignerProperties.GetIsInDesignMode(this);
+            bool designer = DesignerProperties.GetIsInDesignMode(this);
 
             _icon = FindChild<Image>(this, "Icon")!;
             _title = FindChild<TextBlock>(this, "Title")!;
@@ -213,7 +185,7 @@ namespace Wpf.XP.Controls
             SetIconVisibility(IconVisible);
 
             // designer does not like this
-            if (!_designer)
+            if (!designer)
             {
                 _window = Window.GetWindow(this);
 
@@ -235,58 +207,29 @@ namespace Wpf.XP.Controls
                 WindowChrome.SetWindowChrome(_window, _windowChrome);
             }
 
-            SizeWindowToContent(InitialSizeToContent);
-
             _loaded = true;
         }
 
-        protected override void OnContentChanged(object oldContent, object newContent)
+        #region Maximize Fix
+
+        // to fix maximize - https://stackoverflow.com/a/46465322
+        private void HookWindowProc()
         {
-            if (oldContent is FrameworkElement oldContentElement)
-            {
-                oldContentElement.SizeChanged -= Content_SizeChanged;
-            }
-
-            if (newContent is FrameworkElement newContentElement)
-            {
-                newContentElement.SizeChanged += Content_SizeChanged;
-            }
-
-            SizeWindowToContent(InitialSizeToContent);
+            IntPtr handle = new WindowInteropHelper(_window).Handle;
+            HwndSource.FromHwnd(handle)?.AddHook(WindowProc);
         }
 
-        private void Content_SizeChanged(object sender, SizeChangedEventArgs e)
+        private IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            SizeWindowToContent(InitialSizeToContent);
-        }
-
-        #region Size To Content
-
-        private void SizeWindowToContent(SizeToContent sizeToContent)
-        {
-            FrameworkElement window = _window != null ? _window : this;
-
-            if (!_designer && window is not Window)
-                return; // likely not loaded yet
-
-            if (this.Content is FrameworkElement content)
+            switch (msg)
             {
-                if (sizeToContent is SizeToContent.Height or SizeToContent.WidthAndHeight)
-                    window.Height =
-                        content.Height + content.Margin.Top + content.Margin.Bottom + HeightModifier;
-
-                if (sizeToContent is SizeToContent.Width or SizeToContent.WidthAndHeight)
-                    window.Width =
-                        content.Width + content.Margin.Left + content.Margin.Right + WidthModifier;
+                case 0x0024:
+                    Native.WmGetMinMaxInfo(hwnd, lParam, (int)MinWidth, (int)MinHeight);
+                    handled = true;
+                    break;
             }
-            else
-            {
-                if (sizeToContent is SizeToContent.Height or SizeToContent.WidthAndHeight)
-                    window.Height = MinimumHeight;
 
-                if (sizeToContent is SizeToContent.Width or SizeToContent.WidthAndHeight)
-                    window.Width = MinimumWidth;
-            }
+            return (IntPtr)0;
         }
 
         #endregion
@@ -461,30 +404,6 @@ namespace Wpf.XP.Controls
                 _maximizeButton.Visibility = Visibility.Visible;
                 _restoreButton.Visibility = Visibility.Collapsed;
             }
-        }
-
-        #endregion
-
-        #region Maximize Fix
-
-        // to fix maximize - https://stackoverflow.com/a/46465322
-        private void HookWindowProc()
-        {
-            IntPtr handle = new WindowInteropHelper(_window).Handle;
-            HwndSource.FromHwnd(handle)?.AddHook(WindowProc);
-        }
-
-        private IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            switch (msg)
-            {
-                case 0x0024:
-                    Native.WmGetMinMaxInfo(hwnd, lParam, (int)MinWidth, (int)MinHeight);
-                    handled = true;
-                    break;
-            }
-
-            return (IntPtr)0;
         }
 
         #endregion

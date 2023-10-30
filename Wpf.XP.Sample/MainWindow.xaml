@@ -7,6 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xp="clr-namespace:Wpf.XP.Controls;assembly=Wpf.XP"
     Title="MainWindow"
+    Width="300"
+    Height="150"
     AllowsTransparency="True"
     Background="Transparent"
     ResizeMode="NoResize"
@@ -18,12 +20,8 @@
         Title="Troll"
         Icon="pack://application:,,,/Resources/troll.ico"
         IconVisible="True"
-        InitialSizeToContent="WidthAndHeight"
         ResizeMode="NoResize">
-        <Grid
-            Width="250"
-            Height="100"
-            Margin="20">
+        <Grid Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
