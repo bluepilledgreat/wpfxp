@@ -16,12 +16,12 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type local:WindowFrame}">
+    <Style TargetType="{x:Type local:XPWindow}">
         <Setter Property="Background" Value="#ECE9D8" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type local:WindowFrame}">
-                    <Grid x:Name="MainGrid">
+                <ControlTemplate TargetType="{x:Type local:XPWindow}">
+                    <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
@@ -208,7 +208,7 @@
                                 Stretch="Fill" />
 
                             <Grid Grid.Column="1" Background="{TemplateBinding Background}">
-                                <ContentPresenter />
+                                <ContentPresenter MinWidth="0" MinHeight="0" />
                             </Grid>
 
                             <Image

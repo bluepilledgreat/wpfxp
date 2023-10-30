@@ -20,9 +20,9 @@ using System.Windows.Shell;
 namespace Wpf.XP.Controls
 {
     /// <summary>
-    /// Windows XP Window Frame
+    /// Windows XP Window
     /// </summary>
-    public class WindowFrame : ContentControl
+    public class XPWindow : Window
     {
         #region Constants
 
@@ -33,6 +33,9 @@ namespace Wpf.XP.Controls
         private const int MinimumHeight = TitleBarHeight + ResizeBorderSize;
         private const int MinimumWidth = 115;
 
+        public const int HeightModifier = MinimumHeight;
+        public const int WidthModifier = ResizeBorderSize * 2;
+
         #endregion
 
         #region Private fields
@@ -40,8 +43,6 @@ namespace Wpf.XP.Controls
         private bool _loaded = false;
 
         private Image _icon = null!;
-        private Window _window = null!;
-
         private TextBlock _title = null!;
 
         private Image _titleBarLeft = null!;
@@ -66,49 +67,59 @@ namespace Wpf.XP.Controls
 
         #region Public properties
 
-        public string? Title
-        {
-            get => GetValue(TitleProperty) as string;
-            set => SetValue(TitleProperty, value);
-        }
-
-        public ImageSource? Icon
-        {
-            get => GetValue(IconProperty) as ImageSource;
-            set => SetValue(IconProperty, value);
-        }
-
         public bool IconVisible
         {
             get => (bool)GetValue(IconVisibleProperty);
             set => SetValue(IconVisibleProperty, value);
         }
 
-        public ResizeMode ResizeMode
+        public new ResizeMode ResizeMode
         {
             get => (ResizeMode)GetValue(ResizeModeProperty);
             set => SetValue(ResizeModeProperty, value);
+        }
+
+        public double FrameHeight
+        {
+            get => (double)GetValue(FrameHeightProperty);
+            private set => SetValue(FrameHeightPropertyKey, value);
+        }
+
+        public double FrameWidth
+        {
+            get => (double)GetValue(FrameWidthProperty);
+            private set => SetValue(FrameWidthPropertyKey, value);
         }
 
         #endregion
 
         #region Dependency properties registration
 
-        public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register("Title", typeof(string), typeof(WindowFrame),
-            new FrameworkPropertyMetadata("Binbows xp", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-
-        public static readonly DependencyProperty IconProperty =
-            DependencyProperty.Register("Icon", typeof(ImageSource), typeof(WindowFrame),
-            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-
         public static readonly DependencyProperty IconVisibleProperty =
-            DependencyProperty.Register("IconVisible", typeof(bool), typeof(WindowFrame),
+            DependencyProperty.Register("IconVisible", typeof(bool), typeof(XPWindow),
             new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, IconVisiblePropertyChanged));
 
-        public static readonly DependencyProperty ResizeModeProperty =
-            DependencyProperty.Register("ResizeMode", typeof(ResizeMode), typeof(WindowFrame),
+        // FUCK YOU WHY CANT I HOOK AN EVENT TO RESIZE MODE???
+        //            vvv - the only way out of this
+        public static new readonly DependencyProperty ResizeModeProperty =
+            DependencyProperty.Register("ResizeMode", typeof(ResizeMode), typeof(XPWindow),
             new FrameworkPropertyMetadata(ResizeMode.CanResize, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, ResizeModePropertyChanged));
+
+        private static readonly DependencyPropertyKey FrameHeightPropertyKey =
+            DependencyProperty.RegisterReadOnly("FrameHeight", typeof(double), typeof(XPWindow),
+            new FrameworkPropertyMetadata(Double.NaN, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        public static readonly DependencyProperty FrameHeightProperty = FrameHeightPropertyKey.DependencyProperty;
+
+        private static readonly DependencyPropertyKey FrameWidthPropertyKey =
+            DependencyProperty.RegisterReadOnly("FrameWidth", typeof(double), typeof(XPWindow),
+            new FrameworkPropertyMetadata(Double.NaN, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        public static readonly DependencyProperty FrameWidthProperty = FrameWidthPropertyKey.DependencyProperty;
+
+        /*public static readonly DependencyProperty AutoResizeWindowProperty = 
+            DependencyProperty.Register("AutoResizeWindow", typeof(double), typeof(XPWindow),
+            new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));*/
 
         #endregion
 
@@ -116,7 +127,7 @@ namespace Wpf.XP.Controls
 
         private static void IconVisiblePropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
         {
-            WindowFrame? windowFrame = source as WindowFrame;
+            XPWindow? windowFrame = source as XPWindow;
             if (windowFrame == null)
                 return;
 
@@ -130,7 +141,7 @@ namespace Wpf.XP.Controls
 
         private static void ResizeModePropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
         {
-            WindowFrame? windowFrame = source as WindowFrame;
+            XPWindow? windowFrame = source as XPWindow;
             if (windowFrame == null)
                 return;
 
@@ -144,8 +155,13 @@ namespace Wpf.XP.Controls
 
         #endregion
 
-        public WindowFrame() : base()
+        public XPWindow() : base()
         {
+            this.Loaded += XPWindow_Loaded;
+
+            this.AllowsTransparency = true;
+            //this.Background = Brushes.Transparent;
+            this.WindowStyle = WindowStyle.None;
         }
 
         public override void OnApplyTemplate()
@@ -187,27 +203,42 @@ namespace Wpf.XP.Controls
             // designer does not like this
             if (!designer)
             {
-                _window = Window.GetWindow(this);
-
-                _window.SizeChanged += Window_SizeChanged;
+                this.SizeChanged += Window_SizeChanged;
                 CheckWindowSize();
 
                 HookWindowProc();
 
-                _window.StateChanged += Window_StateChanged;
+                this.StateChanged += Window_StateChanged;
 
-                _window.Activated += Window_Activated;
-                _window.Deactivated += Window_Deactivated;
+                this.Activated += Window_Activated;
+                this.Deactivated += Window_Deactivated;
 
                 _minimizeButton.Click += MinimizeButton_Click;
                 _maximizeButton.Click += MaximizeButton_Click;
                 _restoreButton.Click += RestoreButton_Click;
                 _closeButton.Click += CloseButton_Click;
 
-                WindowChrome.SetWindowChrome(_window, _windowChrome);
+                WindowChrome.SetWindowChrome(this, _windowChrome);
             }
 
             _loaded = true;
+        }
+
+        private void XPWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            var sizeToContent = this.SizeToContent;
+            this.SizeToContent = SizeToContent.Manual;
+
+            if (this.Content is FrameworkElement content)
+            {
+                if (sizeToContent is SizeToContent.Height or SizeToContent.WidthAndHeight)
+                    this.Height =
+                        content.Height + content.Margin.Top + content.Margin.Bottom + HeightModifier;
+
+                if (sizeToContent is SizeToContent.Width or SizeToContent.WidthAndHeight)
+                    this.Width = 
+                        content.Width + content.Margin.Left + content.Margin.Right + WidthModifier;
+            }
         }
 
         #region Maximize Fix
@@ -215,7 +246,7 @@ namespace Wpf.XP.Controls
         // to fix maximize - https://stackoverflow.com/a/46465322
         private void HookWindowProc()
         {
-            IntPtr handle = new WindowInteropHelper(_window).Handle;
+            IntPtr handle = new WindowInteropHelper(this).Handle;
             HwndSource.FromHwnd(handle)?.AddHook(WindowProc);
         }
 
@@ -238,11 +269,14 @@ namespace Wpf.XP.Controls
 
         private void CheckWindowSize()
         {
-            if (_window.Height < MinimumHeight)
-                _window.Height = MinimumHeight;
+            this.MinHeight = MinimumHeight;
+            this.MinWidth = MinimumWidth;
 
-            if (_window.Width < MinimumWidth)
-                _window.Width = MinimumWidth;
+            if (this.Height < MinimumHeight)
+                this.Height = MinimumHeight;
+
+            if (this.Width < MinimumWidth)
+                this.Width = MinimumWidth;
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -278,7 +312,7 @@ namespace Wpf.XP.Controls
             _maximizeButton.IsEnabled = resizeMode != ResizeMode.CanMinimize;
             _restoreButton.IsEnabled = resizeMode != ResizeMode.CanMinimize;
 
-            WindowState windowState = _window != null ? _window.WindowState : WindowState.Normal;
+            WindowState windowState = this.WindowState;
 
             _minimizeButton.Visibility = Visibility.Visible;
             _maximizeButton.Visibility = windowState != WindowState.Maximized ? Visibility.Visible : Visibility.Collapsed;
@@ -370,22 +404,22 @@ namespace Wpf.XP.Controls
 
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
         {
-            _window.WindowState = WindowState.Minimized;
+            this.WindowState = WindowState.Minimized;
         }
 
         private void MaximizeButton_Click(object sender, RoutedEventArgs e)
         {
-            _window.WindowState = WindowState.Maximized;
+            this.WindowState = WindowState.Maximized;
         }
 
         private void RestoreButton_Click(object sender, RoutedEventArgs e)
         {
-            _window.WindowState = WindowState.Normal;
+            this.WindowState = WindowState.Normal;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            _window.Close();
+            this.Close();
         }
 
         #endregion
@@ -394,7 +428,7 @@ namespace Wpf.XP.Controls
 
         private void Window_StateChanged(object? sender, EventArgs e)
         {
-            if (_window.WindowState == WindowState.Maximized)
+            if (this.WindowState == WindowState.Maximized)
             {
                 _maximizeButton.Visibility = Visibility.Collapsed;
                 _restoreButton.Visibility = Visibility.Visible;
@@ -466,9 +500,9 @@ namespace Wpf.XP.Controls
 
         #endregion
 
-        static WindowFrame()
+        static XPWindow()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(WindowFrame), new FrameworkPropertyMetadata(typeof(WindowFrame)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(XPWindow), new FrameworkPropertyMetadata(typeof(XPWindow)));
         }
     }
 }
