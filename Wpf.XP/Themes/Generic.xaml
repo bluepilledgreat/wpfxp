@@ -82,7 +82,7 @@
                                 Width="16"
                                 Height="16"
                                 Margin="-1,-1,4,0"
-                                RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                RenderOptions.BitmapScalingMode="HighQuality"
                                 SnapsToDevicePixels="True"
                                 Source="{TemplateBinding Icon}" />
 
